@@ -1,21 +1,15 @@
 #!/bin/bash
-apt-get update
-apt-get upgrade
-apt-get install -y python-software-properties debconf-utils
-add-apt-repository -y ppa:webupd8team/java
-apt-get update
-echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | sudo debconf-set-selections
-apt-get install -y oracle-java8-installer
-
-
+wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb http://packages.elastic.co/logstash/2.2/debian stable main" | sudo tee -a /etc/apt/sources.list
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
-echo 'deb http://packages.elastic.co/logstash/2.2/debian stable main' | sudo tee /etc/apt/sources.list.d/logstash-2.2.x.list
 
 apt-get update
-apt-get -y install oracle-java8-installer
-apt-get -y install logstash nodejs git -y python-pip nginx monit
+apt-get -y upgrade
 
-cat <<EOF > 
+apt-get -y install python-software-properties debconf-utils default-jre
+apt-get -y install logstash nodejs git python-pip nginx monit
+
+cat <<EOF > /etc/logstash/conf.d/app.conf
 input {
   file {
     path => [ "/var/log/*.log", "/var/log/messages", "/var/log/syslog" ]
@@ -36,7 +30,7 @@ server {
     server_name example.com;
 
     location / {
-        proxy_pass http://localhost:3080;
+        proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -51,7 +45,20 @@ rm -rf $dir
 mkdir -p $dir
 cd $dir
 echo "Get Latest Rev"
-git clone https://github.com/roosri/sloth.git .
-npm install -g initd-forever
-initd-forever -a /opt/data/app/sloth.js -n /etc/init.d/sloth -l /var/log/app.log -m /etc/nonit/conf.d/sloth
+git clone https://github.com/jdobyns/sloth.git .
+npm install -g forever initd-forever
+cd /tmp
+initd-forever -a /opt/data/app/sloth.js -n sloth -l /var/log/app.log -p /var/run/sloth.pid
+mv -v /tmp/sloth /etc/init.d/sloth
+chmod a+x /etc/init.d/sloth
+cat <<EOF > /etc/monit/conf.d/sloth.monit 
+check process nodejs with pidfile "/var/run/sloth.pid"
+        start program = "/etc/init.d/sloth start"
+   stop program = "/etc/init.d/sloth stop"
+    if failed port 3000 protocol HTTP
+        request /
+        with timeout 10 seconds
+        then restart
+EOF
+
 service monit reload
