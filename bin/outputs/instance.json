@@ -1,0 +1,87 @@
+{
+    "OwnerId": "271814435277", 
+    "ReservationId": "r-15dc4ac7", 
+    "Groups": [], 
+    "Instances": [
+        {
+            "Monitoring": {
+                "State": "disabled"
+            }, 
+            "PublicDnsName": "", 
+            "RootDeviceType": "ebs", 
+            "State": {
+                "Code": 0, 
+                "Name": "pending"
+            }, 
+            "EbsOptimized": false, 
+            "LaunchTime": "2016-03-10T10:15:04.000Z", 
+            "PrivateIpAddress": "10.1.12.59", 
+            "ProductCodes": [], 
+            "VpcId": "vpc-5d795239", 
+            "StateTransitionReason": "", 
+            "InstanceId": "i-64019ae0", 
+            "ImageId": "ami-fce3c696", 
+            "PrivateDnsName": "ip-10-1-12-59.ec2.internal", 
+            "KeyName": "opsflo_hart_challenge", 
+            "SecurityGroups": [
+                {
+                    "GroupName": "hartchallenge-sgSimAdminAccess-1O80DPYXC7MNB", 
+                    "GroupId": "sg-858432fd"
+                }
+            ], 
+            "ClientToken": "", 
+            "SubnetId": "subnet-5ee67528", 
+            "InstanceType": "t2.medium", 
+            "NetworkInterfaces": [
+                {
+                    "Status": "in-use", 
+                    "MacAddress": "0a:d8:7f:d8:5a:e7", 
+                    "SourceDestCheck": true, 
+                    "VpcId": "vpc-5d795239", 
+                    "Description": "", 
+                    "NetworkInterfaceId": "eni-7e62843f", 
+                    "PrivateIpAddresses": [
+                        {
+                            "PrivateDnsName": "ip-10-1-12-59.ec2.internal", 
+                            "Primary": true, 
+                            "PrivateIpAddress": "10.1.12.59"
+                        }
+                    ], 
+                    "PrivateDnsName": "ip-10-1-12-59.ec2.internal", 
+                    "Attachment": {
+                        "Status": "attaching", 
+                        "DeviceIndex": 0, 
+                        "DeleteOnTermination": true, 
+                        "AttachmentId": "eni-attach-04877bfe", 
+                        "AttachTime": "2016-03-10T10:15:04.000Z"
+                    }, 
+                    "Groups": [
+                        {
+                            "GroupName": "hartchallenge-sgSimAdminAccess-1O80DPYXC7MNB", 
+                            "GroupId": "sg-858432fd"
+                        }
+                    ], 
+                    "SubnetId": "subnet-5ee67528", 
+                    "OwnerId": "271814435277", 
+                    "PrivateIpAddress": "10.1.12.59"
+                }
+            ], 
+            "SourceDestCheck": true, 
+            "Placement": {
+                "Tenancy": "default", 
+                "GroupName": "", 
+                "AvailabilityZone": "us-east-1b"
+            }, 
+            "Hypervisor": "xen", 
+            "BlockDeviceMappings": [], 
+            "Architecture": "x86_64", 
+            "StateReason": {
+                "Message": "pending", 
+                "Code": "pending"
+            }, 
+            "RootDeviceName": "/dev/sda1", 
+            "VirtualizationType": "hvm", 
+            "AmiLaunchIndex": 0
+        }
+    ]
+}
