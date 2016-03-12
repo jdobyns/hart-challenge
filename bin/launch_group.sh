@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: ./launchgroup.sh app-name"
+  exit 1
+fi
+
 aws autoscaling create-launch-configuration \
 	--launch-configuration-name "$1" \
 	--image-id 'ami-fce3c696' \

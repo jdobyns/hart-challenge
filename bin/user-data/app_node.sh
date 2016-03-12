@@ -9,6 +9,8 @@ apt-get -y upgrade
 apt-get -y install python-software-properties debconf-utils default-jre
 apt-get -y install logstash nodejs git python-pip nginx monit
 
+es_endpoint=`aws es describe-elasticsearch-domain --domain-name $1 | jq .DomainStatus.Endpoint`
+
 cat <<EOF > /etc/logstash/conf.d/app.conf
 input {
   file {
@@ -18,34 +20,25 @@ input {
 }
  
 output {
-  elasticsearch { host => https://$es_url}
+  elasticsearch { host => https://$es_endpoint}
   stdout { codec => rubydebug }
 }
 EOF
 
-cat <<EOF > /etc/nginx/sites-available/default
-upstream app_yourdomain {
-    server 127.0.0.1:3000;
-    keepalive 8;
-}
-
+cat <<'EOF' > /etc/nginx/sites-available/default
 server {
-    listen 0.0.0.0:80;
-    server_name app.opsflo.com;
-    access_log /var/log/nginx/app.log;
+  listen       80;
+  server_name  app.opsflo.com;
 
-    # pass the request to the node.js server with the correct headers
-    # and much more can be added, see nginx config options
-    location / {
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header Host $http_host;
-      proxy_set_header X-NginX-Proxy true;
-
-      proxy_pass http://app_yourdomain/;
-      proxy_redirect off;
-    }
- }
+  location / {
+    proxy_pass http://localhost:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+  }
+}
 EOF
 
 service nginx restart
