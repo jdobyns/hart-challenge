@@ -7,14 +7,14 @@ then
 fi
 
 echo `date`
-echo "Go get a beer, AWS takes about 7 mins to activate a new ES domain"
+echo ""
 
 cd bin
 ./services/elasticsearch.sh $1 &
 PID1=$!
 echo `date`
 
-echo "Launching Autoscaling group to back app.opsflo.com"
+echo "Launch Autoscaling group to back app.opsflo.com"
 ./launch_group.sh $1
 PID2=$!
 
@@ -26,10 +26,12 @@ while true
     if [ ! -z $es_endpoint ]; then
       break
     fi
-    echo "waiting for es_endpoint to become available - `date`"
+    echo "waiting for es_endpoint to become available - `date` "
     sleep 5
 done
 echo "ES url https://$es_endpoint "
 
 wait $PID2
-echo "https://app.opsflo.com will be up as soon as the elb's activate."
+
+
+echo "https://app.opsflo.com will be up as soon as the elb activates. "
